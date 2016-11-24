@@ -1,13 +1,26 @@
-from bst import BinarySearchTree()
+from bst import BinarySearchTree
+import xlrd
+import unicodedata
+
 
 class Menu:
-    def __init__(self):
+    def __init__(self, filename):
+        self.menu_dictionary = self._read_menu(filename)
         self.menu_bst = self._get_menu_bst()
         self.toppings_bst = self._get_toppings_bst()
 
+    def _read_menu(path):
+        menu = xlrd.open_workbook(path).sheet_by_index(0)
+        info = {}
+        for value in range(1, menu.nrows):
+            number, name, price = menu.row_values(value)
+            name = unicodedata.normalize('NFKD', name).encode('ascii', 'ignore')
+            info[value] = (name, price)
+        return info
+
     def _get_menu_bst(self):
         menu_bst = BinarySearchTree()
-        for list in MENU_ITEMS:
+        for  in info:
             for item, price in list:
                 menu_bst.put(item, price)
         return menu_bst
