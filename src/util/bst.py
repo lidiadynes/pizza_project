@@ -53,6 +53,21 @@ class BinarySearchTree:
     def __len__(self):
         return self.size
 
+    def entry_set(self):
+        if self.root != None:
+            return self._entry_set(self.root)
+        else:
+            return []
+
+    def _entry_set(self, node):
+        entry_set = []
+        if node.leftChild:
+            entry_set += self._entry_set(node.leftChild)
+        entry_set.append((node.key, node.payload))
+        if node.rightChild:
+            entry_set += self._entry_set(node.rightChild)
+        return entry_set
+
     def put(self,key,val):
         if self.root:
             self._put(key,val,self.root)
