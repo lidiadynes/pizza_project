@@ -68,24 +68,6 @@
       </column>
      </widget>
     </item>
-    <item row="1" column="0">
-     <layout class="QHBoxLayout" name="horizontalLayout_9">
-      <item>
-       <widget class="QPushButton" name="addCustomerBtn">
-        <property name="text">
-         <string>Add Customer</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="deleteCustomerBtn">
-        <property name="text">
-         <string>Delete Customer</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
     <item row="2" column="0">
      <layout class="QHBoxLayout" name="horizontalLayout_5">
       <item>
@@ -102,9 +84,9 @@
        </spacer>
       </item>
       <item>
-       <widget class="QCheckBox" name="customerCheckBox">
+       <widget class="QPushButton" name="customerEditButton">
         <property name="text">
-         <string>Edit Information</string>
+         <string>Enable Editing</string>
         </property>
        </widget>
       </item>
@@ -120,6 +102,30 @@
          </size>
         </property>
        </spacer>
+      </item>
+     </layout>
+    </item>
+    <item row="1" column="0">
+     <layout class="QHBoxLayout" name="horizontalLayout_9">
+      <item>
+       <widget class="QPushButton" name="addCustomerBtn">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string>Add Customer</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="deleteCustomerBtn">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string>Delete Customer</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </item>
@@ -166,6 +172,9 @@
      <layout class="QHBoxLayout" name="horizontalLayout_4">
       <item>
        <widget class="QPushButton" name="addOrderBtn">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="text">
          <string>Add Order</string>
         </property>
@@ -173,6 +182,9 @@
       </item>
       <item>
        <widget class="QPushButton" name="deleteOrderBtn">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="text">
          <string>Delete Order</string>
         </property>
@@ -196,9 +208,9 @@
        </spacer>
       </item>
       <item>
-       <widget class="QCheckBox" name="orderCheckBox">
+       <widget class="QPushButton" name="orderEditButton">
         <property name="text">
-         <string>Edit Information</string>
+         <string>Enable Editing</string>
         </property>
        </widget>
       </item>
@@ -267,9 +279,9 @@
        </spacer>
       </item>
       <item>
-       <widget class="QCheckBox" name="menuCheckBox">
+       <widget class="QPushButton" name="menuEditButton">
         <property name="text">
-         <string>Edit information</string>
+         <string>Enable Editing</string>
         </property>
        </widget>
       </item>

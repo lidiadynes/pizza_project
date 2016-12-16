@@ -6,7 +6,6 @@ from src.gui.qt_py import orderMenuUI
 from src.gui.qt_py import orderSummaryUI
 from src.gui.qt_py import finalMessageUI
 
-from src.menu import Menu
 from src.order import Order
 from src.customer import Customer
 from src.database import Database
@@ -18,7 +17,7 @@ import datetime
 
 FILENAME = '..\..\data_storage\data.xls'
 
-
+# Welcome screen
 class Welcome(QWidget, welcomeUI.Ui_Form):
     def __init__(self, parent=None):
         super(Welcome, self).__init__(parent)
@@ -28,22 +27,25 @@ class Welcome(QWidget, welcomeUI.Ui_Form):
         self.connect(self.noButton, SIGNAL('clicked()'), self.show_new_customer)
         self.connect(self.employeeBtn, SIGNAL('clicked()'), self.show_login)
 
+    # Show login screen if employee login pressed
     def show_login(self):
         self.hide()
         self.window = EmployeeLogin()
         self.window.show()
 
+    # Show existing customer screen if Yes pressed
     def show_existing_customer(self):
         self.hide()
         self.window = ExistingCustomer()
         self.window.show()
 
+    # Show new customer screen if No pressed
     def show_new_customer(self):
         self.hide()
         self.window = NewCustomer()
         self.window.show()
 
-
+# Screen for existing customers
 class ExistingCustomer(QWidget, existingCustomerUI.Ui_Form):
     def __init__(self, parent=None):
         super(ExistingCustomer, self).__init__(parent)
@@ -53,6 +55,8 @@ class ExistingCustomer(QWidget, existingCustomerUI.Ui_Form):
         self.connect(self.confirmButton, SIGNAL('clicked()'), self.show_order_menu)
         self.connect(self.previousButton, SIGNAL('clicked()'), self.show_welcome)
 
+    # Check phone input and show menu page if details are correct.
+    # Otherwise shows message box with error msg/NotInDatabase window
     def show_order_menu(self):
         if not self.phoneInput.text():
             QMessageBox.information(self, "Error",
@@ -68,12 +72,13 @@ class ExistingCustomer(QWidget, existingCustomerUI.Ui_Form):
                 self.window = NotInDatabase(self.phoneInput.text(), self)
                 self.window.show()
 
+    # Show welcome page if Back button pressed
     def show_welcome(self):
         self.hide()
         self.window = Welcome()
         self.window.show()
 
-
+# Window that lets customer know phone number is already in database on NewCustomer page
 class ExistsInDatabase(QWidget, messageUI.Ui_Form):
     def __init__(self, number, database, background_window, parent=None):
         super(ExistsInDatabase, self).__init__(parent)
@@ -83,12 +88,15 @@ class ExistsInDatabase(QWidget, messageUI.Ui_Form):
         self.background_window = background_window
         self.messageLabel.setText("<html><head/><body><p align=\"center\">" + str(
             self.number) + " is in our database. </p><p align=\"center\">Would you like to make an order using this number?</p></body></html>")
+
         self.connect(self.yesButton, SIGNAL('clicked()'), self.show_new_customer)
         self.connect(self.noButton, SIGNAL('clicked()'), self.show_order_menu)
 
+    # Hide screen
     def show_order_menu(self):
         self.hide()
 
+    # Show new customer screen
     def show_new_customer(self):
         self.hide()
         self.background_window.hide()
@@ -96,6 +104,7 @@ class ExistsInDatabase(QWidget, messageUI.Ui_Form):
         self.window.show()
 
 
+# Window that lets customer know phone number is not in database on ExistingCustomer page
 class NotInDatabase(QWidget, messageUI.Ui_Form):
     def __init__(self, number, background_window, parent=None):
         super(NotInDatabase, self).__init__(parent)
@@ -103,20 +112,23 @@ class NotInDatabase(QWidget, messageUI.Ui_Form):
         self.number = number
         self.background_window = background_window
         self.messageLabel.setText("<html><head/><body><p align=\"center\">" + str(
-            self.number) + " is not in our database. </p><p align=\"center\">Would you like to go to the existing customer page?</p></body></html>")
+            self.number) + " is not in our database. </p><p align=\"center\">Would you like to go to the new customer page?</p></body></html>")
+
         self.connect(self.yesButton, SIGNAL('clicked()'), self.show_existing_customer)
         self.connect(self.noButton, SIGNAL('clicked()'), self.show_new_customer)
 
+    # Show NewCustomer page
     def show_new_customer(self):
         self.hide()
 
+    # Show ExistingCustomer page
     def show_existing_customer(self):
         self.hide()
         self.background_window.hide()
         self.window = NewCustomer()
         self.window.show()
 
-
+# Page for new customers to fill in details. Checks for blank fields + if phone number is already in database
 class NewCustomer(QWidget, newCustomerUI.Ui_Form):
     def __init__(self, parent=None):
         super(NewCustomer, self).__init__(parent)
@@ -126,6 +138,7 @@ class NewCustomer(QWidget, newCustomerUI.Ui_Form):
         self.connect(self.confirmButton, SIGNAL('clicked()'), self.show_order_menu)
         self.connect(self.previousButton, SIGNAL('clicked()'), self.show_welcome)
 
+    # Checks fields + shows menu if correct. Otherwise shows error message/ExistsInDatabase screen
     def show_order_menu(self):
         if not self.firstNameInput.text() or not self.lastNameInput.text() or not self.postcodeInput.text() \
                 or not self.phoneInput.text() or not self.emailInput.text():
@@ -143,7 +156,8 @@ class NewCustomer(QWidget, newCustomerUI.Ui_Form):
             else:
                 self.window = ExistsInDatabase(self.phoneInput.text(), self.database, self)
                 self.window.show()
-                
+
+    # Create customer object + initialise database
     def make_customer(self):
         first_name = self.firstNameInput.text()
         last_name = self.lastNameInput.text()
@@ -154,12 +168,13 @@ class NewCustomer(QWidget, newCustomerUI.Ui_Form):
         database = Database(FILENAME)
         return customer, database
 
+    # Show welcome screen if Back pressed
     def show_welcome(self):
         self.hide()
         self.window = Welcome()
         self.window.show()
 
-
+# Show Menu screen. Lists items + prices with quantities
 class OrderMenu(QWidget, orderMenuUI.Ui_Form):
     def __init__(self, customer, database, order=None, parent=None):
         super(OrderMenu, self).__init__(parent)
@@ -168,16 +183,19 @@ class OrderMenu(QWidget, orderMenuUI.Ui_Form):
         self.database = database
         self.order = order
 
-        self.menu = Menu(FILENAME)
-        self.entries = self.menu.menu_bst.entry_set()
+        self.menu = self.database.get_menu_bst()
+        self.entries = self.menu.entry_set()
         self.max_row_count = len(self.entries)
 
         self.fill_table()
         self.connect(self.confirmButton, SIGNAL('clicked()'), self.show_order_summary)
 
+    # If order not initialised, initialises order with inputted item quantity values. Otherwise edits existing order.
+    # Checks fields and shows error message if incorrect
     def show_order_summary(self):
         items = {}
         invalid_character = False
+
         for row in range(0, self.max_row_count):
             if not self.tableWidget.item(row, 2).text().isdigit():
                 invalid_character = True
@@ -200,27 +218,32 @@ class OrderMenu(QWidget, orderMenuUI.Ui_Form):
             self.window = OrderSummary(self.customer, self.database, self.order)
             self.window.show()
 
+    # Fill Menu table with items from database
     def fill_table(self):
         for row in range(0, self.max_row_count):
             self.tableWidget.setColumnWidth(0, 420)
             self.tableWidget.setColumnWidth(1, 140)
             self.tableWidget.horizontalHeader().setStretchLastSection(True)
             self.tableWidget.insertRow(row)
+
             name = self.entries[row][0]
             name_item = QTableWidgetItem(name)
             name_item.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
-            price_string = unichr(163) + "%.2f" % self.menu.get_menu_price(name)
-            price_item = QTableWidgetItem(price_string)
+
+            price = unichr(163) + "%.2f" % self.menu.get(name)
+            price_item = QTableWidgetItem(price)
             price_item.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
+
             self.tableWidget.setItem(row, 0, name_item)
             self.tableWidget.setItem(row, 1, price_item)
+
             if self.order == None:
                 self.tableWidget.setItem(row, 2, QTableWidgetItem('0'))
             else:
                 self.tableWidget.setItem(row, 2,
                                          QTableWidgetItem(str(self.order.number_of_items(self.entries[row][0]))))
 
-
+# Order summary window
 class OrderSummary(QWidget, orderSummaryUI.Ui_Form):
     def __init__(self, customer, database, order, parent=None):
         super(OrderSummary, self).__init__(parent)
@@ -230,16 +253,18 @@ class OrderSummary(QWidget, orderSummaryUI.Ui_Form):
         self.order = order
         self.headerLabel.setText("Item".ljust(28) + "Quantity".ljust(12) + "Price")
         self.orderLabel.setText(self.order.to_string())
-        cost_string = "%.2f" % self.order.cost
-        self.totalLabel.setText("Total cost is:".ljust(40) + unichr(163) + cost_string)
+        self.totalLabel.setText("Total cost is:".ljust(40) + unichr(163) + "%.2f" % self.order.cost)
+
         self.connect(self.editButton, SIGNAL("clicked()"), self.show_order_menu)
         self.connect(self.confirmButton, SIGNAL("clicked()"), self.show_final_message)
 
+    # Show order menu if back pressed
     def show_order_menu(self):
         self.hide()
         self.window = OrderMenu(self.customer, self.database, self.order)
         self.window.show()
 
+    # Show confirmation window if confirm pressed. Add order + customer info to database.
     def show_final_message(self):
         self.order.day_ordered = "%02d / %02d / %04d" % (
             int(datetime.datetime.now().day), int(datetime.datetime.now().month), int(datetime.datetime.now().year))
@@ -254,7 +279,7 @@ class OrderSummary(QWidget, orderSummaryUI.Ui_Form):
         self.window = FinalMessage(self.order)
         self.window.show()
 
-
+# Order confirmation window
 class FinalMessage(QWidget, finalMessageUI.Ui_Form):
     def __init__(self, order, parent=None):
         super(FinalMessage, self).__init__(parent)
