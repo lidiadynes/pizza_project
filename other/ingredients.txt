@@ -1,6 +1,0 @@
-tomato		garlic		oregano				
-tomato		mozzarella	basil				
-mushrooms	mozzarella	goats cheese	tomato			
-ham		mozzarella	pineapple	tomato			
-capers		olives		anchovies	garlic		tomato		oregano		mozzarella
-tomato		mozzarella	pepperoni				
